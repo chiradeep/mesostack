@@ -31,14 +31,25 @@ cp pkg/linux_amd64/packer-cloudstack $GOPATH/bin
 ```
 
 ## Build Mesos Image using Packer
-Copy `mesostack.json` from this repository to the Packer VM 
-Edit the `builders` part of the Packer template (`mesostack.json`). Fill in the values for 
+Copy `mesostack.json` from this repository to the Packer VM.
+
+
+Edit the `builders` part of the Packer template (`mesostack.json`). Fill in the values for :
+
+
       `hypervisor`: xenserver has been tested
-      `service_offering_id` : this is the service offering used by Packer to instantiate a new (Mesos) VM
-      `template_id` : the CloudStack template id of the base Ubuntu template
-      `zone_id` : zone where Packer will create the Mesos VM
-      `disk_offering_id` : Any disk offering (shouldn't matter)
-      `network_ids` : Network where Packer will create the Mesos VM. This is the same network as the Packer VM
+
+      `service_offering_id` : this is the service offering used by Packer to instantiate a new (Mesos) VM.
+
+      `template_id` : the CloudStack template id of the base Ubuntu template.
+
+      `zone_id` : zone where Packer will create the Mesos VM.
+
+      `disk_offering_id` : Any disk offering (shouldn't matter).
+
+      `network_ids` : Network where Packer will create the Mesos VM. This is the same network as the Packer VM.
+
+
 We need the credentials to the CloudStack cloud.
 ```bash
 export CLOUDSTACK_API_URL="http://cloudstack.local:8080/client/api"
@@ -50,6 +61,7 @@ Execute
 packer validate mesostack.json
 packer build mesostack.json
 ```
+
 If this works, you will have a brand new template called 'Ubuntu_mesos'.
 
 ## Build the Mesosphere cluster in an isolated network
