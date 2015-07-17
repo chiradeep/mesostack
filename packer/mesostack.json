@@ -21,7 +21,6 @@
       "service_offering_id" : "03f15d3e-57cd-41de-afb0-8714c3a3f05a",
       "template_id" : "936ddbeb-a04a-4fb4-bf5a-e1de49fa3af5",
       "zone_id" : "5ea72245-fbe5-4646-9a88-277b81facfbe",
-      "disk_offering_id" :"9315744b-91d5-408c-8ee9-ca77f06d62cf",
       "network_ids" : ["5fed5b81-ea49-4e5a-bc36-ee52bd782d54"],
       "ssh_username": "ubuntu",
       "ssh_timeout": "15m",

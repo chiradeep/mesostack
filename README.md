@@ -26,8 +26,7 @@ make -C $GOPATH/src/github.com/schubergphilis/packer-cloudstack updatedeps dev
 git checkout tags/v0.7.5
 cd $GOPATH/src/github.com/schubergphilis/packer-cloudstack
 [edit scripts/build.sh to comment out go get -u]
-scripts/build.sh
-cp pkg/linux_amd64/packer-cloudstack $GOPATH/bin
+make dev
 ```
 
 ## Build Mesos Image using Packer
@@ -45,9 +44,7 @@ Edit the `builders` part of the Packer template (`mesostack.json`). Fill in the 
 
       `zone_id` : zone where Packer will create the Mesos VM.
 
-      `disk_offering_id` : Any disk offering (shouldn't matter).
-
-      `network_ids` : Network where Packer will create the Mesos VM. This is the same network as the Packer VM.
+      `network_ids` : Network where Packer will create the Mesos VM. This has to be the same network as the Packer VM.
 
 
 We need the credentials to the CloudStack cloud.
@@ -56,7 +53,7 @@ export CLOUDSTACK_API_URL="http://cloudstack.local:8080/client/api"
 export CLOUDSTACK_API_KEY="AAAAAAAAAAAAAAAAAA"
 export CLOUDSTACK_SECRET_KEY="AAAAAAAAAAAAAAAAAA"
 ```
-Execute
+Execute on Packer VM
 ```bash
 packer validate mesostack.json
 packer build mesostack.json
