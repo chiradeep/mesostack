@@ -35,15 +35,25 @@ resource "cloudstack_firewall" "master_ssh" {
   }
 }
 
-resource "cloudstack_firewall" "mesos_marathon" {
+resource "cloudstack_firewall" "mesos_5050" {
   ipaddress = "${cloudstack_ipaddress.public_ip.id}"
-  depends_on = ["cloudstack_instance.master"]
-  count = "${var.num_masters}"
+  depends_on = ["cloudstack_instance.master", "cloudstack_firewall.master_ssh"]
 
   rule {
     source_cidr = "0.0.0.0/0"
     protocol = "tcp"
-    ports = ["5050", "8080"]
+    ports = ["5050"]
+  }
+}
+
+resource "cloudstack_firewall" "marathon_8080" {
+  ipaddress = "${cloudstack_ipaddress.public_ip.id}"
+  depends_on = ["cloudstack_instance.master", "cloudstack_firewall.mesos_5050"]
+
+  rule {
+    source_cidr = "0.0.0.0/0"
+    protocol = "tcp"
+    ports = ["8080"]
   }
 }
 
@@ -93,7 +103,7 @@ resource "cloudstack_port_forward" "master_ssh" {
       inline = [
           "sudo chmod a+x ~/configure_zk.py ~/configure_mesos.py",
           "sudo ./configure_zk.py -m -h ${join(\",\", cloudstack_instance.master.*.ipaddress)} -n ${count.index+1}",
-          "sudo ./configure_mesos.py -m -h ${join(\",\", cloudstack_instance.master.*.ipaddress)} -i ${element(cloudstack_instance.master.*.ipaddress, count.index+1)}",
+          "sudo ./configure_mesos.py -m -h ${join(\",\", cloudstack_instance.master.*.ipaddress)} -i ${element(cloudstack_instance.master.*.ipaddress, count.index)}",
           "sudo stop mesos-slave",
           "sudo start mesos-master",
           "sudo restart zookeeper",
@@ -111,7 +121,7 @@ resource "cloudstack_port_forward" "master_5050" {
     protocol = "tcp"
     private_port = "5050"
     public_port = "5050"
-    virtual_machine = "${element(cloudstack_instance.master.*.name, 1)}"
+    virtual_machine = "${element(cloudstack_instance.master.*.name, 0)}"
   }
 }
 
@@ -123,6 +133,6 @@ resource "cloudstack_port_forward" "master_8080" {
     protocol = "tcp"
     private_port = "8080"
     public_port = "8080"
-    virtual_machine = "${element(cloudstack_instance.master.*.name, 1)}"
+    virtual_machine = "${element(cloudstack_instance.master.*.name, 0)}"
   }
 }

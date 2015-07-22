@@ -2,7 +2,7 @@
 
 resource "cloudstack_firewall" "slave_ssh" {
   ipaddress = "${cloudstack_ipaddress.public_ip.id}"
-  depends_on = ["cloudstack_instance.slave"]
+  depends_on = ["cloudstack_instance.slave", "cloudstack_firewall.master_ssh"]
   count = "${var.num_slaves}"
 
   rule {
@@ -54,8 +54,7 @@ resource "cloudstack_port_forward" "slave_ssh" {
       inline = [
           "sudo chmod a+x ~/configure_zk.py ~/configure_mesos.py",
           "sudo ./configure_zk.py  -h ${join(\",\", cloudstack_instance.master.*.ipaddress)} -n ${count.index+1}",
-          "sudo ./configure_mesos.py  -i ${self.ipaddress}",
-          "sudo ./configure_mesos.py -i ${element(cloudstack_instance.slave.*.ipaddress, count.index+1)}",
+          "sudo ./configure_mesos.py -i ${element(cloudstack_instance.slave.*.ipaddress, count.index)}",
           "sudo stop mesos-master",
           "sudo start mesos-slave",
           "echo \"Completed terraform slave provisioning\" > ~/install.log"
