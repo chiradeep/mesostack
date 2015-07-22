@@ -2,13 +2,13 @@ module "mesostack" {
     source = "./cloudstack"
 
     # CS API URL
-    cs_api_url = "http://10.10.122.33:8080/client/api"
+    cs_api_url = "http://10.81.29.35:8080/client/api"
 
     # CS access key
-    cs_api_key = "qSy40uxUscFj63oT6QpKWJQitLuIcgbhZBhVoNAq129x7lLZdEK3DrE5BdUlJl-3NuO0ZJu6Rs64wh5qTngX6A"
+    cs_api_key = "bZJRKacZsx3G8V1jjuHakMMKmO2Ja3ScNH8dWA0L2Xi3TVqw4mHnLqcz39kuHoBfG3jwty3OCRi0sx07qrPT8w"
 
     # CS secret key
-    cs_secret_key = "dKflJiNEx_UruBjoiqtHmhakAYY6mwgM4INnAzKUln4LKyOClsf72I0FeRw5ou-2aGPz7eTiA_hVQFzc0PfBbQ"
+    cs_secret_key = "RrcPRvetaMx48m6K6fTjq-iM3E5pV_L-_MsbO_K0ih3W3UPOAADoRNrRWwaPBP_PSsfqXjUwVzH4ze3QbgQLBQ"
 
     # The SSH key name to use for the instances
     cs_key_name = "ubuntu"

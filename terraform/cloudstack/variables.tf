@@ -34,7 +34,7 @@ variable "cs_nw_cidr_block" {
 
 variable "cs_image" {
     description = "The name of the image to base the launched instances."
-    default = "Ubuntu1404"
+    default = "Ubuntu1404_mesos"
 }
 
 variable "master_instance_type" {
@@ -57,6 +57,11 @@ variable "num_masters" {
     default = "3"
 }
 
+variable "master_instance_ip_start" {
+    description = "The ip address (last octet) to start numbering the masters"
+    default = "20"
+}
+
 variable "num_slaves" {
     description = "The number of slave instances to launch."
     default = "3"
@@ -67,8 +72,13 @@ variable "cs_network_name" {
     default = "subnet01"
 }
 
-variable "cs_ssh_port_start" {
-    description = "The port on the public ip that is forwarded to the ssh port of the first instance. Subsequent instances get the port incremented"
+variable "master_ssh_port_start" {
+    description = "The port on the public ip that is forwarded to the ssh port of the first master instance. Subsequent instances get the port incremented"
     default = "1222"
+}
+
+variable "slave_ssh_port_start" {
+    description = "The port on the public ip that is forwarded to the ssh port of the first slave instance. Subsequent instances get the port incremented"
+    default = "2222"
 }
 
