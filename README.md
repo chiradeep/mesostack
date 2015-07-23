@@ -8,7 +8,7 @@ Deploy [Mesosphere] (https://mesosphere.com)  on [Apache CloudStack] (http://www
 ## Approach
 First we build a Mesos image (CloudStack template) that contains the necessary mesosphere packages using [Packer](https://www.packer.io). For both master and slave nodes we use the same CloudStack template, although the slave requires only a subset of the master's software. To do this, we start with a base Ubuntu1404 image and install Mesosphere packages on it.
 
-Once Packer creates a Mesos base template for us, we will use Terraform to create the Mesosphere cluster using  this base template to create the master and slave Mesos VMs
+Once Packer creates a Mesos base template for us, we will use Terraform to create the Mesosphere cluster using  this base template to create the master and slave Mesos VMs. We will use simple scripts derived from this [tutorial] (https://www.digitalocean.com/community/tutorials/how-to-configure-a-production-ready-mesosphere-cluster-on-ubuntu-14-04) as our guide to configure Mesos. Note that this is different from using `cloud-init` to drive the install and configuration of the Mesos nodes. Our approach is closer to *immutable infrastructure*. To upgrade packages, just build a new template using Packer with the upgraded images, delete nodes and reprovision fresh nodes. 
 
 ## Packer install
 Create an Ubuntu base VM in a guest network in CloudStack. Install Packer on this VM. We'll call this VM the Packer VM.
