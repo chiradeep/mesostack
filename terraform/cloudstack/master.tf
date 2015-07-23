@@ -102,13 +102,14 @@ resource "cloudstack_port_forward" "master_ssh" {
   provisioner "remote-exec" {
       inline = [
           "sudo chmod a+x ~/configure_zk.py ~/configure_mesos.py",
+          "sudo echo \"${element(cloudstack_instance.master.*.ipaddress, count.index)} ${element(cloudstack_instance.master.*.name, count.index)}\" | sudo tee -a /etc/hosts",
           "sudo ./configure_zk.py -m -h ${join(\",\", cloudstack_instance.master.*.ipaddress)} -n ${count.index+1}",
           "sudo ./configure_mesos.py -m -h ${join(\",\", cloudstack_instance.master.*.ipaddress)} -i ${element(cloudstack_instance.master.*.ipaddress, count.index)}",
           "sudo stop mesos-slave",
           "sudo start mesos-master",
           "sudo restart zookeeper",
-          "sudo start marathon",
-          "echo \"Completed terraform provisioning\" > ~/install.log"
+          "sudo restart marathon",
+          "echo \"Completed master terraform provisioning\" > ~/install.log"
       ]
     }
 }

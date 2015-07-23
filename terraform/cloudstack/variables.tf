@@ -39,12 +39,12 @@ variable "cs_image" {
 
 variable "master_instance_type" {
     description = "The machine type to use for the  master instances."
-    default = "t1.micro"
+    default = "t1.medium"
 }
 
 variable "slave_instance_type" {
     description = "The machine type to use for the  master instances."
-    default = "t1.micro"
+    default = "t1.medium"
 }
 
 variable "cs_instance_basename" {

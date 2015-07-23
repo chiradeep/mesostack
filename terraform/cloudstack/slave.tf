@@ -52,11 +52,12 @@ resource "cloudstack_port_forward" "slave_ssh" {
 
   provisioner "remote-exec" {
       inline = [
+          "sudo echo \"${element(cloudstack_instance.master.*.ipaddress, count.index)} ${element(cloudstack_instance.master.*.name, count.index)}\" | sudo tee -a /etc/hosts",
           "sudo chmod a+x ~/configure_zk.py ~/configure_mesos.py",
           "sudo ./configure_zk.py  -h ${join(\",\", cloudstack_instance.master.*.ipaddress)} -n ${count.index+1}",
           "sudo ./configure_mesos.py -i ${element(cloudstack_instance.slave.*.ipaddress, count.index)}",
           "sudo stop mesos-master",
-          "sudo start mesos-slave",
+          "sudo restart mesos-slave",
           "echo \"Completed terraform slave provisioning\" > ~/install.log"
       ]
     }
