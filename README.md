@@ -8,7 +8,7 @@ Deploy [Mesosphere] (https://mesosphere.com)  on [Apache CloudStack] (http://www
 ## Approach
 First we build a Mesos image (CloudStack template) that contains the necessary mesosphere packages using [Packer](https://www.packer.io). For both master and slave nodes we use the same CloudStack template, although the slave requires only a subset of the master's software. To do this, we start with a base Ubuntu1404 image and install Mesosphere packages on it.
 
-Once Packer creates a Mesos base template for us, we will use Terraform to create the Mesosphere cluster using  this base template to create the master and slave Mesos VMs. We will use simple scripts derived from this [tutorial] (https://www.digitalocean.com/community/tutorials/how-to-configure-a-production-ready-mesosphere-cluster-on-ubuntu-14-04) as our guide to configure Mesos. Note that this is different from using `cloud-init` to drive the install and configuration of the Mesos nodes. Our approach is closer to *immutable infrastructure*. To upgrade packages, just build a new template using Packer with the upgraded images, delete nodes and reprovision fresh nodes. 
+Once Packer creates a Mesos base template for us, we will use [Terraform](https://www.terraform.io/) to create the Mesosphere cluster using  this base template to create the master and slave Mesos VMs. We will use simple scripts derived from this [tutorial] (https://www.digitalocean.com/community/tutorials/how-to-configure-a-production-ready-mesosphere-cluster-on-ubuntu-14-04) as our guide to configure Mesos. Note that this is different from using `cloud-init` to drive the install and configuration of the Mesos nodes. Our approach is closer to *immutable infrastructure*. To upgrade packages, just build a new template using Packer with the upgraded images, delete nodes and reprovision fresh nodes. 
 
 ## Packer install
 Create an Ubuntu base VM in a guest network in CloudStack. Install Packer on this VM. We'll call this VM the Packer VM.
@@ -81,7 +81,7 @@ The available variables that can be configured are:
 * `num_masters`: The number of Mesos Masters. Zookeeper and Marathon will run on these as well to launch (default `3`)
 * `num_slaves`: The number of Mesos Slaves. 
 
-Other variables may be configured in cloudstack/variables.tf . Of particular interest are the instance types (service offerings) for the master and slave nodes (default : t1.medium), and the ip address defaults (172.16.0.x/24)
+Other variables may be configured in `cloudstack/variables.tf` . Of particular interest are the instance types (service offerings) for the master and slave nodes (default : `t1.medium`), and the ip address defaults (`172.16.0.x/24`)
 
 ### Deploy
 
@@ -117,3 +117,18 @@ You can add additional slave nodes to grow your cluster by changing the variable
   terraform plan
   terraform apply
 ```
+### How the Terraform template works
+- creates a new Isolated Guest network
+- creates egress rules to allow all traffic out of this network
+- creates the required number of master VMs from the Packer-built-template. The ssh keypair is specified
+- Acquires a public IP for the Isolated network
+- creates ssh port forwarding on this public IP to each of the master VMs
+- opens the firewall for the ssh port forwarding
+- as part of the ssh port forwarding, uses the 'file' provisioner to `scp` the config scripts into the master VMs.
+- as part of the ssh port forwarding resource, uses the 'remote-exec' provisioner to execute the copied scripts.
+- creates port forwarding rules on the public IP for ports 5050 (Mesos master) and 8080 (Marathon)
+- creates the required number of slave VMs from the Packer-built-template. The ssh keypair is specified
+- creates ssh port forwarding on the public IP to each of the slave VMs.
+- opens the firewall for the ssh port forwarding
+- as part of the ssh port forwarding, uses the 'file' provisioner to `scp` the config scripts into the slave VMs.
+- as part of the ssh port forwarding resource, uses the 'remote-exec' provisioner to execute the copied scripts on the slave VMs.
