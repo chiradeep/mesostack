@@ -5,10 +5,10 @@ module "mesostack" {
     cs_api_url = "http://10.81.29.35:8080/client/api"
 
     # CS access key
-    cs_api_key = "bZJRKacZsx3G8V1jjuHakMMKmO2Ja3ScNH8dWA0L2Xi3TVqw4mHnLqcz39kuHoBfG3jwty3OCRi0sx07qrPT8w"
+    cs_api_key = "${var.cs_api_key}"
 
     # CS secret key
-    cs_secret_key = "RrcPRvetaMx48m6K6fTjq-iM3E5pV_L-_MsbO_K0ih3W3UPOAADoRNrRWwaPBP_PSsfqXjUwVzH4ze3QbgQLBQ"
+    cs_secret_key = "${var.cs_secret_key}"
 
     # The SSH key name to use for the instances
     cs_key_name = "ubuntu"
